@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101820">
+<meta name="description" content="Build your own realistic little business empire in this idle tycoon game.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Cornerstone Tycoon</title>
+<style>
+:root{--bg:#101820;--panel:#1b2933;--panel2:#243541;--gold:#f5bd50;--green:#65d6a0;--text:#f4f5f6;--muted:#a9b7c0;--line:#3a4a55}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#101820,#16232b 55%,#101820);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;color:var(--text);min-height:100vh}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 14px;font-weight:750;background:var(--gold);color:#1b2328}button:disabled{opacity:.4;cursor:not-allowed}.app{max-width:680px;margin:auto;padding:env(safe-area-inset-top) 16px calc(22px + env(safe-area-inset-bottom))}
+header{padding:20px 2px 14px;display:flex;justify-content:space-between;align-items:center;gap:12px}.brand{font-size:12px;letter-spacing:.17em;color:var(--muted);font-weight:800}.logo{font-size:24px;font-weight:900;letter-spacing:-.04em}.save{font-size:11px;color:var(--green);border:1px solid #3a6556;padding:7px 9px;border-radius:99px;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#263b47,#172831);border:1px solid #3a4a55;border-radius:22px;padding:22px;position:relative;overflow:hidden}
+.hero:after{content:"";position:absolute;width:190px;height:190px;border:1px solid #ffffff12;border-radius:50%;right:-55px;top:-50px;box-shadow:0 0 0 20px #ffffff05,0 0 0 42px #ffffff04}
+.eyebrow{font-size:11px;letter-spacing:.13em;color:var(--muted);font-weight:800;text-transform:uppercase}.cash{font-size:clamp(34px,9vw,48px);font-weight:900;letter-spacing:-.055em;margin:7px 0}.income{color:var(--green);font-size:14px;font-weight:700}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:20px}.stat{background:#101b22a8;border:1px solid #ffffff10;border-radius:13px;padding:11px}.stat span{display:block;color:var(--muted);font-size:11px}.stat b{display:block;font-size:17px;margin-top:4px}
+.section-head{display:flex;align-items:end;justify-content:space-between;margin:24px 2px 12px}.section-head h2{margin:0;font-size:19px}.section-head span{font-size:12px;color:var(--muted)}
+.business{display:grid;grid-template-columns:58px 1fr auto;gap:12px;align-items:center;background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:13px;margin-bottom:10px}.biz-icon{width:58px;height:58px;border-radius:15px;display:grid;place-items:center;font-size:27px;background:linear-gradient(145deg,#41525a,#202e36);border:1px solid #60717a}.biz-name{font-size:15px;font-weight:850}.biz-desc{font-size:11px;color:var(--muted);margin-top:3px;line-height:1.4}.biz-rate{font-size:12px;color:var(--green);font-weight:750;margin-top:5px}.buy{padding:10px 11px;font-size:12px;min-width:94px}.buy small{display:block;font-size:10px;font-weight:700;opacity:.8;margin-top:3px}
+.progress{height:5px;background:#34434b;border-radius:9px;overflow:hidden;margin-top:9px}.progress div{height:100%;background:var(--green);width:0%;transition:width .2s}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.note{font-size:12px;line-height:1.5;color:var(--muted);padding:15px 2px 4px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#f5bd50;color:#1b2328;padding:11px 16px;border-radius:12px;font-weight:800;box-shadow:0 8px 28px #0006;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}.toast.show{opacity:1}.footer{font-size:10px;text-align:center;color:#73838c;margin-top:22px}
+@media(min-width:560px){.business{grid-template-columns:66px 1fr auto;padding:15px}.biz-icon{width:66px;height:66px}.hero{padding:26px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><div class="brand">REAL-WORLD BUSINESS SIMULATOR</div><div class="logo">CORNERSTONE <span style="color:var(--gold)">TYCOON</span></div></div><div class="save" id="saveStatus">● AUTO-SAVED</div></header>
+<section class="hero">
+<div class="eyebrow">Your available capital</div><div class="cash" id="cash">$250</div><div class="income" id="income">+$0 / minute</div>
+<div class="stats"><div class="stat"><span>Businesses</span><b id="owned">0</b></div><div class="stat"><span>Total earned</span><b id="earned">$0</b></div><div class="stat"><span>Level</span><b id="level">1</b></div></div>
+<div class="progress"><div id="levelBar"></div></div>
+</section>
+<div class="section-head"><h2>Your portfolio</h2><span>Invest to grow your income</span></div>
+<div id="businessList"></div>
+<div class="actions"><button id="collectBtn">Collect profits</button><button class="secondary" id="saveBtn">Save progress</button></div>
+<div class="section-head"><h2>Daily strategy</h2><span>Starter tip</span></div>
+<div class="business" style="grid-template-columns:44px 1fr"><div class="biz-icon" style="width:44px;height:44px;font-size:21px">📈</div><div><div class="biz-name">Reinvest early</div><div class="biz-desc">Buy your first business, then reinvest profits in the best return you can afford. Earnings continue while the game is open, and saved progress can earn offline profits.</div></div></div>
+<div class="note">Game currency is fictional and has no cash value. This MVP contains no ads, payments, tracking, or real-money rewards.</div>
+<div class="footer">CORNERSTONE TYCOON · MVP 0.1 · YOUR PROGRESS IS SAVED ON THIS DEVICE</div>
+</div><div class="toast" id="toast"></div>
+<script>
+const businesses = [
+ {id:"coffee",name:"Neighborhood Coffee Shop",desc:"A small cafe with steady morning traffic.",icon:"☕",cost:100,rate:2},
+ {id:"laundry",name:"Modern Laundromat",desc:"Reliable repeat customers and low staffing needs.",icon:"🧺",cost:350,rate:7},
+ {id:"market",name:"Corner Market",desc:"Everyday essentials with consistent demand.",icon:"🏪",cost:1100,rate:24},
+ {id:"gym",name:"Boutique Fitness Studio",desc:"Memberships create recurring monthly revenue.",icon:"🏋️",cost:3800,rate:85},
+ {id:"hotel",name:"City Business Hotel",desc:"Premium rooms, events, and business travelers.",icon:"🏨",cost:14000,rate:330},
+ {id:"solar",name:"Solar Energy Farm",desc:"Long-term energy contracts scale your empire.",icon:"☀️",cost:55000,rate:1400}
+];
+const initial = {cash:250,earned:0,owned:{},last:Date.now(),totalCollected:0};
+let state;
+try { state = {...initial,...JSON.parse(localStorage.getItem("cornerstone-save")||"{}")}; state.owned=state.owned||{}; } catch { state={...initial,owned:{}}; }
+const $=id=>document.getElementById(id);
+function money(n){ if(n>=1e9)return "$"+(n/1e9).toFixed(2)+"B";if(n>=1e6)return "$"+(n/1e6).toFixed(2)+"M";if(n>=1e4)return "$"+(n/1e3).toFixed(1)+"K";return "$"+Math.floor(n).toLocaleString("en-US");}
+function rate(){return businesses.reduce((s,b)=>s+(state.owned[b.id]||0)*b.rate,0)}
+function count(){return Object.values(state.owned).reduce((a,b)=>a+b,0)}
+function level(){return 1+Math.floor(state.earned/1000)}
+function save(){state.last=Date.now();localStorage.setItem("cornerstone-save",JSON.stringify(state));$("saveStatus").textContent="● AUTO-SAVED";setTimeout(()=>$("saveStatus").textContent="● AUTO-SAVED",500)}
+function toast(msg){$("toast").textContent=msg;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1800)}
+function render(){
+ $("cash").textContent=money(state.cash);$("income").textContent="+"+money(rate())+" / minute";$("owned").textContent=count();$("earned").textContent=money(state.earned);$("level").textContent=level();$("levelBar").style.width=(state.earned%1000)/10+"%";
+ $("businessList").innerHTML=businesses.map(b=>{let n=state.owned[b.id]||0,cost=Math.floor(b.cost*Math.pow(1.16,n));return `<div class="business"><div class="biz-icon">${b.icon}</div><div><div class="biz-name">${b.name} ${n?`<span style="color:var(--gold)">×${n}</span>`:""}</div><div class="biz-desc">${b.desc}</div><div class="biz-rate">+$${b.rate} / min each</div></div><button class="buy" data-buy="${b.id}" ${state.cash<cost?"disabled":""}>Invest<small>${money(cost)}</small></button></div>`}).join("");
+ document.querySelectorAll("[data-buy]").forEach(btn=>btn.addEventListener("click",()=>buy(btn.dataset.buy)));
+}
+function buy(id){let b=businesses.find(x=>x.id===id),n=state.owned[id]||0,cost=Math.floor(b.cost*Math.pow(1.16,n));if(state.cash<cost)return;state.cash-=cost;state.owned[id]=n+1;save();render();toast("Invested in "+b.name+"!")}
+function collect(){let amount=rate()/60*5; if(amount<=0){toast("Buy a business to start earning!");return}state.cash+=amount;state.earned+=amount;state.totalCollected+=amount;save();render();toast("Collected "+money(amount)+" in profits!")}
+$("collectBtn").addEventListener("click",collect);
+$("saveBtn").addEventListener("click",()=>{save();toast("Progress saved on this device.")});
+let elapsed=Math.max(0,Math.min((Date.now()-(state.last||Date.now()))/1000,8*60*60));
+if(elapsed>5){let offline=rate()*elapsed/60;state.cash+=offline;state.earned+=offline;state.totalCollected+=offline;}
+state.last=Date.now();save();render();
+setInterval(()=>{let r=rate()/60;state.cash+=r;state.earned+=r;state.totalCollected+=r;render();},1000);
+setInterval(save,10000);
+if("serviceWorker" in navigator && location.protocol.startsWith("http"))navigator.serviceWorker.register("./sw.js").catch(()=>{});
+</script>
+</body></html>
